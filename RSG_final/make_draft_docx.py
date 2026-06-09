@@ -671,12 +671,13 @@ ref([('Bell, W., 1954, A probability model for the measurement of ecological '
      ('Social Forces', True),
      (', 32(4), 357-364.', False)])
 
-ref([('⚠️ [SW] Cartone, A., 2025, [제목·권호 확인 필요], ', False),
+ref([('⚠️ [SW] Cartone, A., 2025, [제목·저자전체·권호·DOI 확인 필요], ', False),
      ('Population, Space and Place', True),
      ('.', False)])
 
-ref_simple('⚠️ [SW] de Sousa Filho, ..., 2022, [제목·저자·권호 확인 필요], '
-           'SN Social Sciences.')
+ref([('⚠️ [SW] de Sousa Filho, ..., 2022, [제목·저자전체·권호·DOI 확인 필요], ', False),
+     ('SN Social Sciences', True),
+     ('.', False)])
 
 ref([('Duncan, O.D. and Duncan, B., 1955, A methodological analysis of '
       'segregation indexes, ', False),
@@ -688,22 +689,31 @@ ref([('Feitosa, F.F., Câmara, G., Monteiro, A.M.V., Koschitzki, T., and Silva, 
      ('International Journal of Geographical Information Science', True),
      (', 21(3), 299-323. https://doi.org/10.1080/13658810600911903', False)])
 
-ref_simple('⚠️ [SW] Kim et al., 2021, [저자 전체·제목·저널·권호 확인 필요].')
+ref([('⚠️ [SW] Kim, ..., 2021, [저자전체·제목·권호·DOI 확인 필요], ', False),
+     ('Innovation in Aging', True),
+     ('.', False)])
 
-ref_simple('⚠️ [SW] Ku, ..., 2021, [저자 전체·제목·저널·권호 확인 필요].')
+ref([('⚠️ [SW] Ku, ..., 2021, [저자전체·제목·권호·DOI 확인 필요], ', False),
+     ('Population and Development Review', True),
+     ('.', False)])
 
 ref([('Massey, D.S. and Denton, N.A., 1988, The dimensions of residential '
       'segregation, ', False),
      ('Social Forces', True),
      (', 67(2), 281-315.', False)])
 
-ref_simple('⚠️ [SW] Menec, V., 2019, [제목·저널·권호 확인 필요].')
-
-ref([('⚠️ [SW] Owens, A., 2016, [제목·권호 확인 필요], ', False),
-     ('American Sociological Review', True),
+ref([('⚠️ [SW] Menec, V., 2019, [저자전체·제목·권호·DOI 확인 필요], ', False),
+     ('PLoS ONE', True),
      ('.', False)])
 
-ref_simple('⚠️ [SW] Qin et al., 2024, [저자 전체·제목·저널·권호 확인 필요].')
+ref([('Owens, A., 2016, Inequality in children\'s contexts: income segregation '
+      'of households with and without children, ', False),
+     ('American Sociological Review', True),
+     (', 81(3), 549-574.', False)])
+
+ref([('⚠️ [SW] Qin, ..., 2024, [저자전체·제목·권호·DOI 확인 필요], ', False),
+     ('BMC Public Health', True),
+     ('.', False)])
 
 ref([('Reardon, S.F. and Bischoff, K., 2011, Income inequality and income '
       'segregation, ', False),
