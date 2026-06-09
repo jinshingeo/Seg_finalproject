@@ -90,7 +90,7 @@ def fig_placeholder(num, desc):
     cap.alignment = WD_ALIGN_PARAGRAPH.CENTER
     cap.paragraph_format.first_line_indent = Inches(0)
     cap.paragraph_format.space_after = Pt(10)
-    set_run(cap.add_run(f'Figure {num}. {desc}.'), size=CAP_PT)
+    set_run(cap.add_run(f'그림 {num}. {desc}.'), size=CAP_PT)
 
 
 def eq_text(num, text):
@@ -157,24 +157,24 @@ h1('1. 서론 (Introduction)')
 body(
     '한국의 독거노인 가구는 전체 고령자 가구의 36.1%로 가장 높은 비율을 차지하며, '
     '이 중 상당수가 기초생활수급 대상인 저소득 계층이다(⚠️ 통계청/보건복지부). '
-    '특히 독거 여성 노인의 빈곤율은 58.6%에 달하는 것으로 보고되어(Ku 2021 [SW]), '
+    '특히 독거 여성 노인의 빈곤율은 58.6%에 달하는 것으로 보고되어(Ku, 2021 [SW]), '
     '저소득과 독거가 중첩되는 이중 취약 구조가 얼마나 심각한지를 짐작할 수 있다.'
 )
 body(
     '거주지 정렬(residential sorting) 이론은 소득 수준에 따라 개인·가구가 특정 지역으로 '
-    '집중하거나 배제되는 현상이 구조적으로 발생함을 설명한다(Tiebout 1956; '
-    'Reardon & Bischoff 2011). 저소득 독거노인은 낮은 소득(주거비 부담)과 독거(사회적 '
+    '집중하거나 배제되는 현상이 구조적으로 발생함을 설명한다(Tiebout, 1956; '
+    'Reardon and Bischoff, 2011). 저소득 독거노인은 낮은 소득(주거비 부담)과 독거(사회적 '
     '관계망 부재)라는 이중 제약을 동시에 가지므로, 거주지 정렬 메커니즘이 이 집단에게 '
     '특히 강하게 작동할 수 있다. 이러한 분리가 심화될 경우 사회적 교류 기회의 감소와 '
-    '복지 서비스 접근성 불평등으로 이어진다는 점은(Kim et al. 2021 [SW]) 이미 지적된 '
+    '복지 서비스 접근성 불평등으로 이어진다는 점은(Kim et al., 2021 [SW]) 이미 지적된 '
     '바 있으며, 결국 저소득 독거노인의 거주지 분리는 단순한 공간 패턴이 아닌 복지 '
     '불평등의 공간적 발현으로 이해될 필요가 있다.'
 )
 body(
     '저소득 독거노인의 공간적 분포에 관한 기존 연구는 크게 두 방향으로 진행되어 왔다. '
     '첫째는 특정 집단이 어디에 집중되는지를 파악하는 공간 군집 분석으로, 노인 밀집 '
-    '지역이나 고독사 위험 지역의 식별에 초점을 맞추어 왔다(이희연·이다예·유재성 2015; '
-    '안용한·김영호 2023). '
+    '지역이나 고독사 위험 지역의 식별에 초점을 맞추어 왔다(이희연 등, 2015; '
+    '안용한·김영호, 2023). '
     '둘째는 해당 분포에 영향을 미치는 요인을 규명하는 회귀 기반 접근으로, 주거비, '
     '교통 접근성 등의 변수와 노인 집중도의 관계를 분석하였다. 한편 소득 집단 간 '
     '공간적 분리를 정량적으로 측정하는 거주지 분리 측도 연구도 별도의 흐름으로 '
@@ -217,12 +217,12 @@ body(
     '선택하고 그 선택이 누적되면서 도시 내 사회 집단이 공간적으로 분화되는 현상이다. '
     'Tiebout(1956)은 소득이 높을수록 양질의 공공서비스를 제공하는 지역으로 이동함을 '
     '설명하였으며, Schelling(1971)은 개인의 작은 선호가 누적될 경우 예상보다 큰 분리가 '
-    '발생함을 보였다. Reardon & Bischoff(2011)는 이 과정을 부유층의 배타적 입지와 '
+    '발생함을 보였다. Reardon and Bischoff(2011)는 이 과정을 부유층의 배타적 입지와 '
     '저소득층의 선택지 제약이라는 두 경로로 구체화하였다.'
 )
 body(
-    '거주지 분리의 측정 체계는 Massey & Denton(1988)의 5차원 분류에서 출발하여, '
-    "Reardon & O'Sullivan(2004)이 균등성(evenness)과 노출(exposure)의 두 축으로 "
+    '거주지 분리의 측정 체계는 Massey and Denton(1988)의 5차원 분류에서 출발하여, '
+    "Reardon and O'Sullivan(2004)이 균등성(evenness)과 노출(exposure)의 두 축으로 "
     '압축·정립하였다. Feitosa(2007)는 이를 가우시안 커널 기반의 공간 가중 측도로 '
     '확장하여 행정 경계의 자의성과 MAUP 문제를 완화하였으며, 본 연구에서 사용하는 '
     '공간 상이지수(D)와 공간 고립지수(I)의 이론적 기반을 제공한다.'
@@ -238,7 +238,7 @@ body(
     '소득이 거주지 분리의 독립 요인으로 남음을 실증하였다.'
 )
 body(
-    '국내에서는 이희연·이다예·유재성(2015)이 서울시 저소득층 노인 밀집지구의 시·공간 '
+    '국내에서는 이희연 등(2015)이 서울시 저소득층 노인 밀집지구의 시·공간 '
     '분포와 근린환경 특성을 분석하여 월계2동·중계2·3동·등촌동 등 임대아파트 지역의 '
     '저소득층 노인 밀집을 확인하였으며, 안용한·김영호(2023)는 다층모형으로 저소득 '
     '독거노인 분포의 영향 요인을 규명한 바 있다. 그러나 이 연구들은 독거노인 가구를 '
@@ -295,7 +295,7 @@ tp.alignment = WD_ALIGN_PARAGRAPH.CENTER
 tp.paragraph_format.first_line_indent = Inches(0)
 tp.paragraph_format.space_before = Pt(8)
 tp.paragraph_format.space_after = Pt(4)
-set_run(tp.add_run('Table 1. 데이터 목록 및 출처.'), size=CAP_PT)
+set_run(tp.add_run('표 1. 데이터 목록 및 출처.'), size=CAP_PT)
 
 tbl = doc.add_table(rows=5, cols=4)
 tbl.style = 'Table Grid'
@@ -342,7 +342,7 @@ h3('3.3.2 공간 고립지수 (Spatial Isolation Index)')
 
 body(
     '공간 고립지수(I)는 저소득 독거노인이 자신의 근린에서 같은 집단을 만날 확률로 '
-    '정의되며(Bell 1954; Feitosa 2007), 노출(exposure) 차원의 분리를 측정한다. '
+    '정의되며(Bell, 1954; Feitosa, 2007), 노출(exposure) 차원의 분리를 측정한다. '
     '노출형 지수는 집단의 규모에 민감하므로, 절대값보다 무작위 기대값(π: 저소득 '
     '독거노인의 도시 전체 비율)과의 비교를 통해 해석해야 한다.'
 )
@@ -352,7 +352,7 @@ h3('3.3.3 공간 상이지수 (Spatial Dissimilarity Index)')
 
 body(
     '공간 상이지수(D)는 도시 전체에서 두 집단이 얼마나 불균등하게 분포하는지를 나타내는 '
-    '균등성(evenness) 차원의 측도이다(Duncan & Duncan 1955; Feitosa 2007). 국지 '
+    '균등성(evenness) 차원의 측도이다(Duncan and Duncan, 1955; Feitosa, 2007). 국지 '
     '상이지수(Local D)의 부호는 방향을 나타내는데, 양수는 저소득 독거노인이 지역 '
     '평균보다 과대 집중된 상태를, 음수는 상대적으로 배제된 상태를 의미한다.'
 )
@@ -376,12 +376,12 @@ fig_placeholder(2, 'Bandwidth별 전역 D값 변화 및 NSI 곡선')
 # 4. RESULTS AND DISCUSSION
 # ─────────────────────────────────────────────────────
 h1('4. 결과 및 논의')
-h2('4.1 저소득 독거노인의 공간적 고립 (H1: 노출 축)')
+h2('4.1 저소득 독거노인의 공간적 고립 (연구 질문 1: 노출 축)')
 
 body(
     '전역 고립지수는 I = 0.0174로 나타났다. 이는 절대적으로 낮은 수준이나, 저소득 '
     '독거노인의 도시 전체 비율(π ≈ 1.52%)로 계산되는 무작위 기대값 대비 약 14% 높은 '
-    '값으로, 집단 규모를 고려하면 통계적으로 유의미한 고립 수준이다(Feitosa 2007).'
+    '값으로, 집단 규모를 고려하면 통계적으로 유의미한 고립 수준이다(Feitosa, 2007).'
 )
 body(
     '국지 고립지수 지도에서는 강서구, 노원구, 강남구 수서동에 국지 고립이 응축되어 '
@@ -395,7 +395,7 @@ t4_cap.alignment = WD_ALIGN_PARAGRAPH.CENTER
 t4_cap.paragraph_format.first_line_indent = Inches(0)
 t4_cap.paragraph_format.space_before = Pt(6)
 t4_cap.paragraph_format.space_after = Pt(3)
-set_run(t4_cap.add_run('Table 4. 국지 고립지수(Local I) 상위 10개 행정동.'), size=CAP_PT)
+set_run(t4_cap.add_run('표 4. 국지 고립지수(Local I) 상위 10개 행정동.'), size=CAP_PT)
 
 t4 = doc.add_table(rows=11, cols=4)
 t4.style = 'Table Grid'
@@ -439,16 +439,16 @@ body(
 )
 body(
     '이 결과는 소득 제약이 거주지 선택을 제한하여 특정 지역으로의 집중을 낳는다는 '
-    'Reardon & Bischoff(2011)의 메커니즘과 일치하며, 강서·노원 지역의 저렴 주택 '
+    'Reardon and Bischoff(2011)의 메커니즘과 일치하며, 강서·노원 지역의 저렴 주택 '
     '집중이 고립 응축의 공간적 기반임을 시사한다. 특히 국지 고립지수 상위권에 포함된 '
-    '노원구 중계2·3동(3위)·월계2동(5위)은 이희연·이다예·유재성(2015)이 저소득층 노인 '
+    '노원구 중계2·3동(3위)·월계2동(5위)은 이희연 등(2015)이 저소득층 노인 '
     '밀집지구로 확인한 영구임대아파트 지구와 일치하며, 본 연구의 측도 결과가 기존 '
     '밀집지구 연구와 같은 공간적 방향성을 보임을 실증한다. 나아가 Menec(2019) [SW]가 '
     '제시한 "저소득 노인 비율이 높은 지역에 고립 노인이 집중된다"는 패턴과도 일치하며, '
     '공간적 고립이 저소득 집중 지역에 중첩됨을 재확인한다.'
 )
 
-h2('4.2 일반인구 대비 거주지 분리 (H2-1: 균등성 축)')
+h2('4.2 일반인구 대비 거주지 분리 (연구 질문 2: 균등성 축)')
 
 body(
     '일반인구 대비 전역 상이지수는 D = 0.1318로 나타났다. 관례적 기준(D < 0.30: '
@@ -469,14 +469,14 @@ body(
 )
 fig_placeholder(4, 'Local D 단계구분도 — H2-1 (양수: 집중 극, 음수: 배제 극)')
 body(
-    '이 양극 패턴은 Reardon & Bischoff(2011)가 제시한 소득 기반 거주지 분리의 두 경로, '
+    '이 양극 패턴은 Reardon and Bischoff(2011)가 제시한 소득 기반 거주지 분리의 두 경로, '
     '즉 부유층의 배타적 입지 선택(강남·서초의 배제 패턴)과 저소득층의 선택지 제약(노원·'
     '강서의 집중 패턴)과 정확히 대응된다. 이는 저소득 독거노인의 거주지 분리가 개인의 '
     '선택이 아닌 주거비 장벽에 의한 구조적 배제의 결과임을 시사하며, 단순한 공간 집중을 '
     '넘어 사회경제적 불평등이 공간적으로 가시화된 것으로 해석된다.'
 )
 
-h2('4.3 독거노인 내부 소득 기반 분리 (H2-2: 균등성 축)')
+h2('4.3 독거노인 내부 소득 기반 분리 (연구 질문 2: 세부)')
 
 body(
     '독거노인 내부 소득 기반 전역 상이지수는 D = 0.0859로, H2-1(0.1318)보다 낮게 '
@@ -518,7 +518,7 @@ bw_cap.alignment = WD_ALIGN_PARAGRAPH.CENTER
 bw_cap.paragraph_format.first_line_indent = Inches(0)
 bw_cap.paragraph_format.space_before = Pt(6)
 bw_cap.paragraph_format.space_after = Pt(3)
-set_run(bw_cap.add_run('Table 2. Bandwidth별 전역 상이지수 (D, H2-2 기준).'), size=CAP_PT)
+set_run(bw_cap.add_run('표 2. Bandwidth별 전역 상이지수 (D, 연구 질문 2 기준).'), size=CAP_PT)
 
 bw_tbl = doc.add_table(rows=6, cols=2)
 bw_tbl.style = 'Table Grid'
@@ -559,7 +559,7 @@ nsi_cap.alignment = WD_ALIGN_PARAGRAPH.CENTER
 nsi_cap.paragraph_format.first_line_indent = Inches(0)
 nsi_cap.paragraph_format.space_before = Pt(6)
 nsi_cap.paragraph_format.space_after = Pt(3)
-set_run(nsi_cap.add_run('Table 3. Bandwidth별 NSI 값.'), size=CAP_PT)
+set_run(nsi_cap.add_run('표 3. Bandwidth별 NSI 값.'), size=CAP_PT)
 
 nsi_tbl = doc.add_table(rows=7, cols=3)
 nsi_tbl.style = 'Table Grid'
@@ -606,7 +606,7 @@ body(
 body(
     '이론적 기여 측면에서, 본 연구는 거주지 분리 측도를 인종·민족 맥락에서 소득·가구 '
     '형태 맥락으로 확장 적용하였다는 점에서 의의를 갖는다. '
-    "Reardon & O'Sullivan(2004)의 두 축 프레임(노출·균등성)이 서울시 저소득 독거노인 "
+    "Reardon and O'Sullivan(2004)의 두 축 프레임(노출·균등성)이 서울시 저소득 독거노인 "
     '집단에서도 유효하게 작동함을 실증하였으며, 특히 강남·서초에서 관찰된 '
     'Local I 낮음과 Local D 음수의 공존은 두 지수가 독립적으로 움직이는 분리의 두 차원임을 '
     '보여주어, 단일 지수로는 포착할 수 없는 분리 구조를 드러낸다. 정책적으로는 '
@@ -629,6 +629,98 @@ body(
     '수 있다. 또한 본 연구에서 식별된 고위험 행정동을 대상으로 복지시설 접근성 분석을 '
     '연계하여 수요-공급 불일치 구조를 분석하는 것도 유망한 연구 방향이다.'
 )
+
+# ─────────────────────────────────────────────────────
+# REFERENCES
+# ─────────────────────────────────────────────────────
+h1('참고문헌')
+
+
+def ref(parts):
+    """parts: list of (text, italic) tuples"""
+    p = doc.add_paragraph()
+    p.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+    p.paragraph_format.line_spacing = LINE_SPACING
+    p.paragraph_format.space_after = Pt(3)
+    p.paragraph_format.left_indent = INDENT
+    p.paragraph_format.first_line_indent = -INDENT
+    for text, italic in parts:
+        r = p.add_run(text)
+        r.font.name = FONT
+        r.font.size = Pt(BODY_PT)
+        r.italic = italic
+    return p
+
+
+def ref_simple(text):
+    return ref([(text, False)])
+
+
+# ── 국내 문헌 (자모음 순) ──
+ref_simple('⚠️ 안용한·김영호, 2023, [제목·저널명·권호 확인 필요].')
+ref_simple('서울 열린데이터광장, 2024, 행정동별 독거노인 현황(기초생활수급). '
+           'https://data.seoul.go.kr (2024 검색).')
+ref_simple('⚠️ 이희연·이다예·유재성, 2015, [제목·저널명·권호 확인 필요].')
+ref_simple('행정안전부, 2024, 주민등록인구현황(연령별·읍면동별). '
+           'https://jumin.mois.go.kr (2024 검색).')
+
+# ── 외국어 문헌 (알파벳 순) ──
+ref([('Bell, W., 1954, A probability model for the measurement of ecological '
+      'segregation, ', False),
+     ('Social Forces', True),
+     (', 32(4), 357-364.', False)])
+
+ref([('⚠️ [SW] Cartone, A., 2025, [제목·권호 확인 필요], ', False),
+     ('Population, Space and Place', True),
+     ('.', False)])
+
+ref_simple('⚠️ [SW] de Sousa Filho, ..., 2022, [제목·저자·권호 확인 필요], '
+           'SN Social Sciences.')
+
+ref([('Duncan, O.D. and Duncan, B., 1955, A methodological analysis of '
+      'segregation indexes, ', False),
+     ('American Sociological Review', True),
+     (', 20(2), 210-217.', False)])
+
+ref([('Feitosa, F.F., Câmara, G., Monteiro, A.M.V., Koschitzki, T., and Silva, '
+      'M.P.S., 2007, Global and local spatial indices of urban segregation, ', False),
+     ('International Journal of Geographical Information Science', True),
+     (', 21(3), 299-323.', False)])
+
+ref_simple('⚠️ [SW] Kim et al., 2021, [저자 전체·제목·저널·권호 확인 필요].')
+
+ref_simple('⚠️ [SW] Ku, ..., 2021, [저자 전체·제목·저널·권호 확인 필요].')
+
+ref([('Massey, D.S. and Denton, N.A., 1988, The dimensions of residential '
+      'segregation, ', False),
+     ('Social Forces', True),
+     (', 67(2), 281-315.', False)])
+
+ref_simple('⚠️ [SW] Menec, V., 2019, [제목·저널·권호 확인 필요].')
+
+ref([('⚠️ [SW] Owens, A., 2016, [제목·권호 확인 필요], ', False),
+     ('American Sociological Review', True),
+     ('.', False)])
+
+ref_simple('⚠️ [SW] Qin et al., 2024, [저자 전체·제목·저널·권호 확인 필요].')
+
+ref([('Reardon, S.F. and Bischoff, K., 2011, Income inequality and income '
+      'segregation, ', False),
+     ('American Journal of Sociology', True),
+     (', 116(4), 1092-1153.', False)])
+
+ref([("Reardon, S.F. and O'Sullivan, D., 2004, Measures of spatial segregation, ",
+      False),
+     ('Sociological Methodology', True),
+     (', 34(1), 121-162.', False)])
+
+ref([('Schelling, T.C., 1971, Dynamic models of segregation, ', False),
+     ('Journal of Mathematical Sociology', True),
+     (', 1(2), 143-186.', False)])
+
+ref([('Tiebout, C.M., 1956, A pure theory of local expenditures, ', False),
+     ('Journal of Political Economy', True),
+     (', 64(5), 416-424.', False)])
 
 out = '/Users/jin/홍교수님 수업/RSG_final/논문_초안_v1.docx'
 doc.save(out)
