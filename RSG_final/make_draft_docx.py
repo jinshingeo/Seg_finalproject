@@ -660,7 +660,8 @@ def ref_simple(text):
 ref_simple('⚠️ 안용한·김영호, 2023, [제목·저널명·권호 확인 필요].')
 ref_simple('서울 열린데이터광장, 2024, 행정동별 독거노인 현황(기초생활수급). '
            'https://data.seoul.go.kr (2024 검색).')
-ref_simple('⚠️ 이희연·이다예·유재성, 2015, [제목·저널명·권호 확인 필요].')
+ref_simple('이희연·이다예·유재성, 2015, 저소득층 노인 밀집지구의 시·공간 분포와 '
+           '근린환경 특성: 서울시를 사례로, 서울도시연구, 16(2), 1-18.')
 ref_simple('행정안전부, 2024, 주민등록인구현황(연령별·읍면동별). '
            'https://jumin.mois.go.kr (2024 검색).')
 
@@ -685,7 +686,7 @@ ref([('Duncan, O.D. and Duncan, B., 1955, A methodological analysis of '
 ref([('Feitosa, F.F., Câmara, G., Monteiro, A.M.V., Koschitzki, T., and Silva, '
       'M.P.S., 2007, Global and local spatial indices of urban segregation, ', False),
      ('International Journal of Geographical Information Science', True),
-     (', 21(3), 299-323.', False)])
+     (', 21(3), 299-323. https://doi.org/10.1080/13658810600911903', False)])
 
 ref_simple('⚠️ [SW] Kim et al., 2021, [저자 전체·제목·저널·권호 확인 필요].')
 
