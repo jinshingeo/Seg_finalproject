@@ -1,0 +1,923 @@
+from docx import Document
+from docx.shared import Pt, Inches, RGBColor, Cm
+from docx.enum.text import WD_ALIGN_PARAGRAPH
+from docx.oxml.ns import qn
+from docx.oxml import OxmlElement
+
+doc = Document()
+
+sec = doc.sections[0]
+sec.page_width = Cm(21.0)
+sec.page_height = Cm(29.7)
+sec.left_margin = Cm(2.5)
+sec.right_margin = Cm(2.5)
+sec.top_margin = Cm(2.5)
+sec.bottom_margin = Cm(2.5)
+
+FONT = 'Palatino Linotype'
+BODY_PT = 11
+H1_PT = 12
+H2_PT = 11
+CAP_PT = 9
+LINE_SPACING = 1.48
+INDENT = Inches(0.30)
+
+
+def set_run(run, size=BODY_PT, bold=False, italic=False, color=None):
+    run.font.name = FONT
+    run.font.size = Pt(size)
+    run.bold = bold
+    run.italic = italic
+    if color:
+        run.font.color.rgb = color
+
+
+def _add_shading(p, fill):
+    pPr = p._p.get_or_add_pPr()
+    shd = OxmlElement('w:shd')
+    shd.set(qn('w:val'), 'clear')
+    shd.set(qn('w:color'), 'auto')
+    shd.set(qn('w:fill'), fill)
+    pPr.append(shd)
+
+
+# ── IJGI 본문 스타일 ──────────────────────────────────
+
+def body(text, first_indent=True):
+    p = doc.add_paragraph()
+    p.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+    p.paragraph_format.line_spacing = LINE_SPACING
+    p.paragraph_format.space_after = Pt(0)
+    if first_indent:
+        p.paragraph_format.first_line_indent = INDENT
+    set_run(p.add_run(text))
+    return p
+
+
+def h1(text):
+    p = doc.add_paragraph()
+    p.paragraph_format.space_before = Pt(14)
+    p.paragraph_format.space_after = Pt(6)
+    p.paragraph_format.line_spacing = 1.0
+    set_run(p.add_run(text), size=H1_PT, bold=True)
+    return p
+
+
+def h2(text):
+    p = doc.add_paragraph()
+    p.paragraph_format.space_before = Pt(10)
+    p.paragraph_format.space_after = Pt(4)
+    p.paragraph_format.line_spacing = 1.0
+    set_run(p.add_run(text), size=H2_PT, bold=True)
+    return p
+
+
+def h3(text):
+    p = doc.add_paragraph()
+    p.paragraph_format.space_before = Pt(8)
+    p.paragraph_format.space_after = Pt(3)
+    p.paragraph_format.line_spacing = 1.0
+    set_run(p.add_run(text), size=H2_PT, italic=True)
+    return p
+
+
+def fig_placeholder(num, desc):
+    p = doc.add_paragraph()
+    p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    p.paragraph_format.first_line_indent = Inches(0)
+    p.paragraph_format.space_before = Pt(8)
+    p.paragraph_format.space_after = Pt(2)
+    _add_shading(p, 'DCDCDC')
+    set_run(p.add_run(f'[그림 {num} 자리: {desc}]'),
+            size=CAP_PT, color=RGBColor(0x55, 0x55, 0x55))
+    cap = doc.add_paragraph()
+    cap.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    cap.paragraph_format.first_line_indent = Inches(0)
+    cap.paragraph_format.space_after = Pt(10)
+    set_run(cap.add_run(f'Figure {num}. {desc}.'), size=CAP_PT)
+
+
+def eq_text(num, text):
+    p = doc.add_paragraph()
+    p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    p.paragraph_format.first_line_indent = Inches(0)
+    p.paragraph_format.space_before = Pt(4)
+    p.paragraph_format.space_after = Pt(8)
+    run = p.add_run(f'{text}    ({num})')
+    run.font.name = 'Cambria Math'
+    run.font.size = Pt(11)
+
+
+# ── 가이드 요소 스타일 ─────────────────────────────────
+
+def guide_box(text):
+    """역할/구조 회색 박스"""
+    p = doc.add_paragraph()
+    p.paragraph_format.first_line_indent = Inches(0)
+    p.paragraph_format.space_before = Pt(4)
+    p.paragraph_format.space_after = Pt(4)
+    p.paragraph_format.line_spacing = 1.3
+    _add_shading(p, 'EBEBEB')
+    run = p.add_run(text)
+    run.font.name = FONT
+    run.font.size = Pt(8.5)
+    run.italic = True
+    run.font.color.rgb = RGBColor(0x50, 0x50, 0x50)
+    return p
+
+
+def para_label(text):
+    """단락 N | 제목 레이블"""
+    p = doc.add_paragraph()
+    p.paragraph_format.first_line_indent = Inches(0)
+    p.paragraph_format.space_before = Pt(12)
+    p.paragraph_format.space_after = Pt(2)
+    p.paragraph_format.line_spacing = 1.0
+    run = p.add_run(text)
+    run.font.name = FONT
+    run.font.size = Pt(10)
+    run.bold = True
+    run.font.color.rgb = RGBColor(0x1F, 0x3D, 0x6E)
+    return p
+
+
+def what_to_write(text):
+    """무엇을 써야 하나 안내"""
+    p = doc.add_paragraph()
+    p.paragraph_format.first_line_indent = Inches(0)
+    p.paragraph_format.space_before = Pt(1)
+    p.paragraph_format.space_after = Pt(4)
+    p.paragraph_format.line_spacing = 1.3
+    r1 = p.add_run('무엇을 써야 하나: ')
+    r1.font.name = FONT
+    r1.font.size = Pt(9)
+    r1.bold = True
+    r1.font.color.rgb = RGBColor(0x50, 0x50, 0x50)
+    r2 = p.add_run(text)
+    r2.font.name = FONT
+    r2.font.size = Pt(9)
+    r2.italic = True
+    r2.font.color.rgb = RGBColor(0x50, 0x50, 0x50)
+    return p
+
+
+def core_logic(text):
+    """핵심 논리 파란 박스"""
+    p = doc.add_paragraph()
+    p.paragraph_format.first_line_indent = Inches(0)
+    p.paragraph_format.left_indent = Inches(0.15)
+    p.paragraph_format.space_before = Pt(3)
+    p.paragraph_format.space_after = Pt(3)
+    p.paragraph_format.line_spacing = 1.35
+    _add_shading(p, 'D9EAF7')
+    r1 = p.add_run('핵심 논리: ')
+    r1.font.name = FONT
+    r1.font.size = Pt(9.5)
+    r1.bold = True
+    r1.font.color.rgb = RGBColor(0x0A, 0x4E, 0x80)
+    r2 = p.add_run(text)
+    r2.font.name = FONT
+    r2.font.size = Pt(9.5)
+    r2.font.color.rgb = RGBColor(0x0A, 0x4E, 0x80)
+    return p
+
+
+def expanded_example(text):
+    """확장 예시 노란 박스 (이탤릭 IJGI 크기)"""
+    p = doc.add_paragraph()
+    p.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+    p.paragraph_format.first_line_indent = Inches(0)
+    p.paragraph_format.left_indent = Inches(0.15)
+    p.paragraph_format.right_indent = Inches(0.15)
+    p.paragraph_format.space_before = Pt(3)
+    p.paragraph_format.space_after = Pt(1)
+    p.paragraph_format.line_spacing = LINE_SPACING
+    _add_shading(p, 'FFF9E6')
+    r1 = p.add_run('확장 예시: ')
+    r1.font.name = FONT
+    r1.font.size = Pt(9)
+    r1.bold = True
+    r1.font.color.rgb = RGBColor(0x8B, 0x6A, 0x00)
+    r2 = p.add_run(text)
+    r2.font.name = FONT
+    r2.font.size = Pt(BODY_PT)
+    r2.italic = True
+    return p
+
+
+def example_note():
+    p = doc.add_paragraph()
+    p.paragraph_format.first_line_indent = Inches(0)
+    p.paragraph_format.left_indent = Inches(0.15)
+    p.paragraph_format.space_before = Pt(1)
+    p.paragraph_format.space_after = Pt(7)
+    run = p.add_run('* 참고용 예시 — 인용 문헌 추가 시 문장 자유롭게 수정할 것')
+    run.font.name = FONT
+    run.font.size = Pt(8)
+    run.italic = True
+    run.font.color.rgb = RGBColor(0x80, 0x80, 0x80)
+    return p
+
+
+def warn(text):
+    p = doc.add_paragraph()
+    p.paragraph_format.first_line_indent = Inches(0)
+    p.paragraph_format.space_before = Pt(2)
+    p.paragraph_format.space_after = Pt(5)
+    run = p.add_run(f'⚠️ 인용 확인 필요: {text}')
+    run.font.name = FONT
+    run.font.size = Pt(9)
+    run.font.color.rgb = RGBColor(0xCC, 0x44, 0x00)
+    return p
+
+
+# ─────────────────────────────────────────────────────
+# TITLE
+# ─────────────────────────────────────────────────────
+p_title = doc.add_paragraph()
+p_title.alignment = WD_ALIGN_PARAGRAPH.CENTER
+p_title.paragraph_format.first_line_indent = Inches(0)
+p_title.paragraph_format.space_after = Pt(4)
+set_run(p_title.add_run('서울시 저소득 독거노인의 소득 기반 거주지 분리 측도 분석'),
+        size=14, bold=True)
+
+p_title_en = doc.add_paragraph()
+p_title_en.alignment = WD_ALIGN_PARAGRAPH.CENTER
+p_title_en.paragraph_format.first_line_indent = Inches(0)
+p_title_en.paragraph_format.space_after = Pt(20)
+set_run(p_title_en.add_run(
+    'Measuring Income-based Residential Segregation of\n'
+    'Low-income Elderly Living Alone in Seoul'),
+    size=11, italic=True)
+
+# ─────────────────────────────────────────────────────
+# ABSTRACT
+# ─────────────────────────────────────────────────────
+h1('초록 (Abstract)')
+guide_box(
+    '역할: 논문 전체를 200~250자 내외로 압축. 4단락 구조.  |  '
+    '작성 순서: 논문 다 쓴 후 마지막에 작성 권장.'
+)
+
+para_label('단락 1 | 문제 제기')
+what_to_write('왜 이 연구가 필요한가. 저소득 독거노인의 취약성과 거주지 분리라는 현상을 한두 문장으로 제시.')
+body(
+    '저소득 독거노인은 소득 제약으로 거주지 선택권이 극도로 제한된 집단으로, '
+    '특정 지역에 집중되는 거주지 분리가 심화될 경우 사회적 고립과 복지 서비스 '
+    '접근성 불평등으로 이어질 수 있다.'
+)
+
+para_label('단락 2 | 방법론')
+what_to_write('어떤 데이터로, 어떤 방법을 써서 분석했는지 한 문장.')
+body(
+    '본 연구는 서울시 424개 행정동을 대상으로 공간 가중 고립지수(Isolation Index)와 '
+    '상이지수(Dissimilarity Index)를 적용하여 저소득 독거노인의 거주지 분리를 '
+    '노출 축과 균등성 축에서 정량적으로 측정하였다.'
+)
+
+para_label('단락 3 | 핵심 결과')
+what_to_write('핵심 수치 결과 3개를 간결하게.')
+body(
+    '분석 결과, 전역 고립지수(I = 0.0174)는 무작위 기대값 대비 약 14% 높았으며, '
+    '일반인구 대비 전역 상이지수(D = 0.1318)는 독거노인 내부 소득 분리(D = 0.0859)보다 '
+    '크게 나타났다. 국지 분석에서는 강남·서초의 배제 극과 노원·강서의 집중 극이라는 '
+    '뚜렷한 양극 분화가 확인되었다.'
+)
+
+para_label('단락 4 | 연구 의미')
+what_to_write('이 결과가 왜 중요한지, 어떤 정책적 함의가 있는지.')
+body(
+    '이 결과는 소득 제약이 거주지 정렬을 통해 공간적 불평등으로 번역됨을 실증하며, '
+    '행정동 단위의 미시적 복지 개입 근거를 제공한다.'
+)
+
+# ─────────────────────────────────────────────────────
+# 1. INTRODUCTION
+# ─────────────────────────────────────────────────────
+h1('1. 서론 (Introduction)')
+guide_box(
+    '역할: 독자를 연구 주제로 끌어들이고, 왜 이 연구가 필요한지 설득하는 구간.  |  '
+    '구조: 박교수님 5단락 틀 (넓은 주제 → 선행연구 → 갭 → 왜 지금 가능한가 → 이 논문이 하는 것)'
+)
+
+para_label('단락 1 | 전반적 주제')
+what_to_write(
+    '저소득 독거노인이라는 집단의 현황 통계 + 거주지 정렬 이론으로 왜 분리가 구조적으로 '
+    '발생하는지 + 분리가 심화되면 어떤 문제가 생기는지. '
+    '독자가 "아, 이 집단의 공간적 분리가 문제구나"를 느끼게 만드는 단락.'
+)
+core_logic(
+    '저소득 독거노인은 소득 제약과 독거라는 이중 취약성으로 인해 거주지 선택권이 극도로 '
+    '제한되며, 거주지 정렬 이론은 이 집단의 공간적 분리가 구조적으로 발생함을 예측한다. '
+    '분리가 심화될 경우 사회적 교류 감소와 복지 접근성 불평등으로 이어진다.'
+)
+expanded_example(
+    '한국의 독거노인 가구는 전체 고령자 가구의 36.1%로 가장 높은 비율을 차지하며, '
+    '이 중 상당수가 기초생활수급 대상인 저소득 계층이다(⚠️ 통계청/보건복지부). '
+    '특히 독거 여성 노인의 빈곤율은 58.6%에 달하는 것으로 보고되어(Ku 2021 [SW]), '
+    '저소득과 독거가 중첩되는 이중 취약 구조가 얼마나 심각한지를 짐작할 수 있다. '
+    '거주지 정렬(residential sorting) 이론은 소득 수준에 따라 개인·가구가 특정 지역으로 '
+    '집중하거나 배제되는 현상이 구조적으로 발생함을 설명한다(Tiebout 1956; '
+    'Reardon & Bischoff 2011). 저소득 독거노인은 낮은 소득(주거비 부담)과 독거(사회적 '
+    '관계망 부재)라는 이중 제약을 동시에 가지므로, 거주지 정렬 메커니즘이 이 집단에게 '
+    '특히 강하게 작동할 수 있다. 이러한 분리가 심화될 경우 사회적 교류 기회의 감소와 '
+    '복지 서비스 접근성 불평등으로 이어진다는 점은(Kim et al. 2021 [SW]) 이미 지적된 '
+    '바 있으며, 결국 저소득 독거노인의 거주지 분리는 단순한 공간 패턴이 아닌 복지 '
+    '불평등의 공간적 발현으로 이해될 필요가 있다.'
+)
+example_note()
+warn('통계청/보건복지부 독거노인 현황 자료, Tiebout(1956), Reardon & Bischoff(2011)')
+
+para_label('단락 2 | 기존 선행연구 방향')
+what_to_write(
+    '이 주제를 기존 연구들이 어떻게 다뤄왔는지 두 흐름으로 정리. '
+    '① 저소득 독거노인 공간 분포 연구 ② 거주지 분리 측도 연구. '
+    '"이런 연구들이 있었다"를 정리하는 단락. 비판은 아직 안 해도 됨.'
+)
+core_logic(
+    '기존 연구는 두 흐름 — ① 저소득 독거노인 공간 분포·군집 분석, '
+    '② 거주지 분리 측도 체계 발전 — 으로 진행되어 왔다. '
+    '두 흐름 모두 본 연구의 선행 기반이 된다.'
+)
+expanded_example(
+    '저소득 독거노인의 공간적 분포에 관한 기존 연구는 크게 두 방향으로 진행되어 왔다. '
+    '첫째는 특정 집단이 어디에 집중되는지를 파악하는 공간 군집 분석으로, 노인 밀집 '
+    '지역이나 고독사 위험 지역의 식별에 초점을 맞추어 왔다(이희연·이다예·유재성 2015; '
+    '안용한·김영호 2023). '
+    '둘째는 해당 분포에 영향을 미치는 요인을 규명하는 회귀 기반 접근으로, 주거비, '
+    '교통 접근성 등의 변수와 노인 집중도의 관계를 분석하였다. 한편 소득 집단 간 '
+    '공간적 분리를 정량적으로 측정하는 거주지 분리 측도 연구도 별도의 흐름으로 '
+    '발전해 왔다(2장 검토). 그러나 이 두 흐름은 공통적으로 중요한 공백을 남긴다.'
+)
+example_note()
+warn('이희연·이다예·유재성(2015), 안용한·김영호(2023) 서지 최종 확인')
+
+para_label('단락 3 | 선행연구 한계 (Gap)')
+what_to_write(
+    '단락 2의 연구들이 못한 것을 명확히. "그런데 이건 못 했더라"의 단락. '
+    '두 축(노출/균등성) 각각에서 갭을 제시하면 연구 질문과 1:1 대응됨.'
+)
+core_logic(
+    '두 연구 흐름 모두 핵심 공백을 남긴다: 저소득 독거노인을 대상으로 노출 축(고립지수)과 '
+    '균등성 축(상이지수)으로 분리의 정도 자체를 정량 측정한 연구는 검토된 문헌 내에서 확인되지 않는다.'
+)
+expanded_example(
+    '두 흐름 모두 중요한 공백을 남긴다. 첫째, 국내 독거노인 연구는 분포의 군집 여부나 '
+    '영향 요인 분석에 집중할 뿐, 집단 간 공간적 분리의 정도 자체를 정량적으로 측정한 '
+    '연구는 검토된 문헌 내에서 발견되지 않는다. 집중(concentration)과 분리(segregation)는 '
+    '다른 현상으로, 저소득 독거노인이 특정 동에 많다는 것이 곧 다른 집단과 구조적으로 '
+    '분리되어 있음을 의미하지 않는다. 둘째, 거주지 분리 측도를 적용한 연구들은 대부분 '
+    '인종·민족 분리 맥락에 한정되어 있으며, 노출 축(고립지수)으로 저소득 독거노인의 '
+    '사회적 고립 정도를 측정하거나, 균등성 축(상이지수)으로 독거노인 집단 내 소득 기반 '
+    '분리를 측정한 연구는 검토된 문헌 내에서 확인되지 않는다.'
+)
+example_note()
+
+para_label('단락 4 | 왜 지금 내가 할 수 있는가')
+what_to_write(
+    '갭이 존재한다는 것만으로는 부족함. 왜 지금 이 연구가 가능한지를 '
+    '데이터 가용성 + 방법론 발전으로 정당화. "조건이 갖춰졌다"는 단락.'
+)
+body(
+    '최근 행정동 단위의 저소득 독거노인 및 일반 인구 구성 데이터의 가용성이 확보되었으며, '
+    '공간 가중 분리 측도를 계산할 수 있는 방법론적 도구의 발전으로 기존 연구의 '
+    '갭을 실증적으로 채울 조건이 갖춰졌다.'
+)
+
+para_label('단락 5 | 이 논문이 하는 것 + 연구 질문')
+what_to_write(
+    '연구 목적을 명확히 선언 + 연구 질문 2개를 문장으로 제시. '
+    '그 다음 논문 구성 안내로 마무리. 연구 질문은 방법론·결과·결론과 계속 연결.'
+)
+body(
+    '이에 본 연구는 서울시 424개 행정동을 분석 단위로, 저소득 독거노인의 소득 기반 '
+    '거주지 분리를 노출 축(공간 고립지수)과 균등성 축(공간 상이지수)으로 측정하고자 '
+    '한다. 구체적인 연구 질문은 다음과 같다. 연구 질문 1: 서울시 저소득 독거노인은 '
+    '전체 주민 대비 공간적으로 얼마나 고립되어 있으며, 어떤 지역에 집중되는가? '
+    '연구 질문 2: 저소득 독거노인의 거주지 분리는 일반인구 및 일반소득 독거노인 대비 '
+    '어느 정도이며, 공간적으로 어떤 패턴을 보이는가? 이하 본 논문은 2장에서 선행연구를 '
+    '검토하고, 3장에서 분석 방법론을 기술하며, 4장에서 결과 및 논의를 제시하고, '
+    '5장에서 결론을 도출한다.'
+)
+
+# ─────────────────────────────────────────────────────
+# 2. LITERATURE REVIEW
+# ─────────────────────────────────────────────────────
+h1('2. 선행연구')
+guide_box('역할: 우리 연구가 기존 문헌 어디에 위치하는지 보여주는 구간.  |  원칙: 간략하게 — 갭을 찾고 해결책을 제안할 수 있을 정도만. 각 소절 끝에 갭 문장으로 마무리.')
+h2('2.1 거주지 분리의 이론적 배경 및 측도 체계')
+
+para_label('단락 1 | 거주지 정렬 이론')
+what_to_write('왜 소득 기반 분리가 구조적으로 발생하는지의 이론적 설명. Tiebout → Schelling → Reardon & Bischoff 흐름으로.')
+body(
+    '거주지 정렬(residential sorting)은 개인·가구가 소득과 제약 조건에 따라 주거지를 '
+    '선택하고 그 선택이 누적되면서 도시 내 사회 집단이 공간적으로 분화되는 현상이다. '
+    'Tiebout(1956)은 소득이 높을수록 양질의 공공서비스를 제공하는 지역으로 이동함을 '
+    '설명하였으며, Schelling(1971)은 개인의 작은 선호가 누적될 경우 예상보다 큰 분리가 '
+    '발생함을 보였다. Reardon & Bischoff(2011)는 이 과정을 부유층의 배타적 입지와 '
+    '저소득층의 선택지 제약이라는 두 경로로 구체화하였다.'
+)
+
+para_label('단락 2 | 분리 측도의 개념적 발전')
+what_to_write('우리가 쓰는 측도(고립지수, 상이지수)의 학술적 계보. Massey & Denton → Reardon & O\'Sullivan → Feitosa 흐름.')
+body(
+    '거주지 분리의 측정 체계는 Massey & Denton(1988)의 5차원 분류에서 출발하여, '
+    "Reardon & O'Sullivan(2004)이 균등성(evenness)과 노출(exposure)의 두 축으로 "
+    '압축·정립하였다. Feitosa(2007)는 이를 가우시안 커널 기반의 공간 가중 측도로 '
+    '확장하여 행정 경계의 자의성과 MAUP 문제를 완화하였으며, 본 연구에서 사용하는 '
+    '공간 상이지수(D)와 공간 고립지수(I)의 이론적 기반을 제공한다.'
+)
+
+h2('2.2 소득 기반 거주지 분리 연구 (균등성 축)')
+
+para_label('단락 1 | 국외 연구')
+what_to_write('상이지수를 활용한 소득 기반 분리 연구들을 소개. 어떤 패턴을 확인했는지.')
+body(
+    '소득 기반 거주지 분리는 균등성 축의 대표적 연구 대상으로, Cartone(2025) [SW]와 '
+    'de Sousa Filho(2022) [SW] 등이 상이지수를 활용하여 소득 집단 간 공간적 불균등 '
+    '분포를 실증한 바 있다. 이 연구들은 소득 불평등이 심화될수록 거주지 분리가 강화되는 '
+    '패턴을 일관되게 확인하였다. 특히 Owens(2016) [SW]는 가구 유형을 통제한 후에도 '
+    '소득이 거주지 분리의 독립 요인으로 남음을 실증하였다.'
+)
+warn('[SW] Cartone(2025) Population, Space and Place; de Sousa Filho(2022) SN Social Sciences; Owens(2016) ASR')
+
+para_label('단락 2 | 국내 연구 및 갭')
+what_to_write('국내에서 유사하게 진행된 연구 소개 후, "독거노인을 소득 집단으로 나눠 균등성 측도를 적용한 연구는 없다"로 마무리.')
+body(
+    '국내에서는 이희연·이다예·유재성(2015)이 서울시 저소득층 노인 밀집지구의 시·공간 '
+    '분포와 근린환경 특성을 분석하여 월계2동·중계2·3동·등촌동 등 임대아파트 지역의 '
+    '저소득층 노인 밀집을 확인하였으며, 안용한·김영호(2023)는 다층모형으로 저소득 '
+    '독거노인 분포의 영향 요인을 규명한 바 있다. 그러나 이 연구들은 독거노인 가구를 '
+    '소득 집단으로 구분하여 균등성 축의 분리 측도를 적용하지 않았다는 점에서 한계가 있다.'
+)
+
+h2('2.3 저소득 노인의 공간적 고립 연구 (노출 축)')
+
+para_label('단락 1 | 노인 고립 연구 흐름')
+what_to_write('기존 노인 고립 연구가 설문 기반 개인 척도에 집중되어 있음을 보여주고, 공간적 노출 지수 연구 흐름을 간략히 소개.')
+body(
+    '노인의 사회적 고립에 관한 연구는 주로 설문 기반의 개인 척도(외로움, 사회적 관계망)에 '
+    '집중되어 왔으며(⚠️ 관련 문헌 확인 필요), 집단 수준에서 공간적 고립을 측정한 '
+    '연구는 제한적이다. 공간적 고립 연구 중 Menec(2019) [SW]는 저소득 노인 비율이 높은 '
+    '지역에 고립 노인이 집중되는 패턴을 확인하였으며, Qin et al.(2024) [SW]는 공간 '
+    '노출 지수를 활용하여 노인의 지역사회 고립을 측정한 바 있다.'
+)
+warn('[SW] Menec(2019) PLoS ONE; Qin et al.(2024) BMC Public Health')
+
+para_label('단락 2 | 갭')
+what_to_write('이 소절의 결론. 노출 축으로 저소득 독거노인을 측정한 연구가 없다는 것을 명시.')
+body(
+    '저소득 독거노인을 관심 집단으로 설정하고, 전체 주민 대비 공간적 고립의 정도를 '
+    '노출 축(고립지수)으로 측정한 연구는 검토된 문헌 내에서 발견되지 않는다.'
+)
+
+# ─────────────────────────────────────────────────────
+# 3. METHODS
+# ─────────────────────────────────────────────────────
+h1('3. 연구 방법')
+h2('3.1 연구 대상 지역')
+
+para_label('단락 1')
+what_to_write('서울시 소개 + 424개 행정동이 분석 단위인 이유 + EPSG:5179 좌표계 채택 이유.')
+body(
+    '본 연구의 공간적 분석 단위는 서울특별시 424개 행정동이다. 행정동은 복지 서비스 '
+    '전달의 기본 단위로, 저소득 독거노인 인구 데이터가 이 수준에서 공개되어 있다. '
+    '공간 분리 측도 계산 시 미터 단위의 거리 계산이 필요하므로, 좌표계는 한국 측지계 '
+    '기반의 EPSG:5179(Korea 2000 Unified CS)를 적용하였다.'
+)
+fig_placeholder(1, '서울시 424개 행정동 경계 및 저소득 독거노인 분포')
+
+h2('3.2 데이터')
+
+para_label('단락 1 | 분석 대상 및 비교 집단 정의')
+what_to_write('저소득 독거노인(기초생활수급)의 조작적 정의 + 비교 집단(일반소득 독거노인, 전체 주민) 설정 근거.')
+body(
+    '분석 대상인 저소득 독거노인은 기초생활보장 수급자 중 65세 이상 1인 가구로 '
+    '정의하였다. 비교 집단은 두 가지로 설정하였다. 첫째는 전체 주민으로, 고립지수(연구 질문 1) '
+    '계산 시 저소득 독거노인이 사회 전반과 얼마나 분리되어 있는지를 측정하기 위함이다. '
+    '둘째는 일반소득 독거노인(비수급 독거노인)으로, 상이지수(연구 질문 2) 계산 시 동일 가구 '
+    '형태 내 소득 효과만을 분리하기 위함이다.'
+)
+
+para_label('단락 2 | 데이터 출처')
+what_to_write('각 데이터의 출처, 연도, 처리 방법을 간략히.')
+body(
+    '행정동별 독거노인 현황(저소득·일반)은 서울 열린데이터광장(2024)에서 수집하였으며, '
+    '행정동별 주민등록인구(연령별)는 행정안전부(2024)에서 취득하였다. '
+    '행정동 경계 shapefile은 SGIS를 통해 확보하였으며, '
+    '공간 분리 측도 계산을 위한 Gaussian 커널 가중치 적용 시 활용하였다.'
+)
+
+# Table 1
+tp = doc.add_paragraph()
+tp.alignment = WD_ALIGN_PARAGRAPH.CENTER
+tp.paragraph_format.first_line_indent = Inches(0)
+tp.paragraph_format.space_before = Pt(8)
+tp.paragraph_format.space_after = Pt(4)
+set_run(tp.add_run('Table 1. 데이터 목록 및 출처.'), size=CAP_PT)
+
+tbl = doc.add_table(rows=5, cols=4)
+tbl.style = 'Table Grid'
+for i, h_text in enumerate(['데이터명', '출처', '연도', '용도']):
+    tbl.rows[0].cells[i].text = h_text
+    for run in tbl.rows[0].cells[i].paragraphs[0].runs:
+        run.bold = True
+        run.font.name = FONT
+        run.font.size = Pt(CAP_PT)
+tbl_data = [
+    ('행정동별 독거노인 현황', '서울 열린데이터광장', '2024', '저소득·일반소득 독거노인 인구'),
+    ('주민등록인구(연령별)', '행정안전부', '2024', '전체 주민 인구'),
+    ('행정동 경계 shapefile', 'SGIS', '2024', '공간 단위 설정 및 거리 계산'),
+    ('좌표계 변환', 'EPSG:5179', '-', 'Korea 2000 Unified CS 적용'),
+]
+for ri, row_data in enumerate(tbl_data):
+    for ci, val in enumerate(row_data):
+        cell = tbl.rows[ri + 1].cells[ci]
+        cell.text = val
+        for run in cell.paragraphs[0].runs:
+            run.font.name = FONT
+            run.font.size = Pt(CAP_PT)
+
+doc.add_paragraph().paragraph_format.space_after = Pt(8)
+
+h2('3.3 분석 방법')
+h3('3.3.1 공간 가중치 설정')
+
+para_label('단락 1 | MAUP 문제와 공간 가중치')
+what_to_write('행정 경계를 그대로 쓰면 생기는 문제(MAUP) → 공간 가중치가 왜 필요한지.')
+body(
+    '행정동 경계를 분석 단위로 직접 사용할 경우 경계 획정 방식에 따라 결과가 달라지는 '
+    '수정 가능 면적 단위 문제(MAUP)가 발생한다. 이를 완화하기 위해 Feitosa(2007)가 '
+    '제안한 가우시안 커널 기반 공간 가중치를 적용하였다.'
+)
+
+para_label('단락 2 | Gaussian Kernel 및 Bandwidth 설정')
+what_to_write('가우시안 커널 수식 설명 + bandwidth 1,500m 선택 근거.')
+body(
+    '공간 가중치는 식 (1)의 가우시안 커널 함수로 정의되며, 거리가 멀수록 가중치가 '
+    '지수적으로 감소한다. Bandwidth는 1,500m로 설정하였는데, 이는 서울시 행정동의 '
+    '평균 반경(약 1km)을 고려한 값으로, 근린 수준의 공간 상호작용을 포착하기에 적합하다.'
+)
+eq_text(1, 'W_ij = exp(−d²_ij / 2·bw²)')
+
+h3('3.3.2 공간 고립지수 (Spatial Isolation Index)')
+
+para_label('단락 1')
+what_to_write('고립지수의 개념(노출 차원) + 수식 설명 + 집단 규모 민감성 주의사항.')
+body(
+    '공간 고립지수(I)는 저소득 독거노인이 자신의 근린에서 같은 집단을 만날 확률로 '
+    '정의되며(Bell 1954; Feitosa 2007), 노출(exposure) 차원의 분리를 측정한다. '
+    '노출형 지수는 집단의 규모에 민감하므로, 절대값보다 무작위 기대값(π: 저소득 '
+    '독거노인의 도시 전체 비율)과의 비교를 통해 해석해야 한다.'
+)
+eq_text(2, 'I = Σᵢ (aᵢ/A) · (L̃ᵃᵢ / L̃ᵗᵢ)')
+
+h3('3.3.3 공간 상이지수 (Spatial Dissimilarity Index)')
+
+para_label('단락 1')
+what_to_write('상이지수의 개념(균등성 차원) + 수식 설명 + Local D 부호 해석(양수=집중, 음수=배제).')
+body(
+    '공간 상이지수(D)는 도시 전체에서 두 집단이 얼마나 불균등하게 분포하는지를 나타내는 '
+    '균등성(evenness) 차원의 측도이다(Duncan & Duncan 1955; Feitosa 2007). 국지 '
+    '상이지수(Local D)의 부호는 방향을 나타내는데, 양수는 저소득 독거노인이 지역 '
+    '평균보다 과대 집중된 상태를, 음수는 상대적으로 배제된 상태를 의미한다.'
+)
+eq_text(3, 'D = Σᵢ (tᵢ/T) · |p̃ᵢ − P_A| / (2·P_A·P_B)')
+
+h3('3.3.4 민감도 분석 (NSI + Bandwidth 비교)')
+
+para_label('단락 1 | Bandwidth 비교')
+what_to_write('1,500m 선택의 임의성 → 다양한 bandwidth에서도 결과 안정적. 실수치 표 제시.')
+body(
+    'Bandwidth를 500m에서 3,000m까지 변화시키며 전역 상이지수를 반복 계산한 결과, '
+    '아래 표와 같이 단조 감소하면서도 안정적인 패턴을 보였다. 이는 분석 결과가 '
+    'bandwidth 선택에 강건(robust)함을 나타낸다. 주목할 점은 3,000m 수준에서도 '
+    'D = 0.054로 0에 수렴하지 않는다는 것으로, 서울 전체적으로 일정 수준의 소득 기반 '
+    '공간 분리가 구조적으로 존재함을 시사한다.'
+)
+
+# Table 2 — Bandwidth D
+bw_cap = doc.add_paragraph()
+bw_cap.alignment = WD_ALIGN_PARAGRAPH.CENTER
+bw_cap.paragraph_format.first_line_indent = Inches(0)
+bw_cap.paragraph_format.space_before = Pt(6)
+bw_cap.paragraph_format.space_after = Pt(3)
+set_run(bw_cap.add_run('Table 2. Bandwidth별 전역 상이지수 (D, H2-2 기준).'), size=CAP_PT)
+
+bw_tbl = doc.add_table(rows=6, cols=2)
+bw_tbl.style = 'Table Grid'
+for i, h_text in enumerate(['Bandwidth', '전역 D']):
+    bw_tbl.rows[0].cells[i].text = h_text
+    for run in bw_tbl.rows[0].cells[i].paragraphs[0].runs:
+        run.bold = True
+        run.font.name = FONT
+        run.font.size = Pt(CAP_PT)
+bw_data = [
+    ('500 m', '0.1606'), ('1,000 m', '0.1107'),
+    ('1,500 m (주 분석값)', '0.0859'), ('2,000 m', '0.0715'), ('3,000 m', '0.0540'),
+]
+for ri, (bw, d) in enumerate(bw_data):
+    for ci, val in enumerate([bw, d]):
+        cell = bw_tbl.rows[ri + 1].cells[ci]
+        cell.text = val
+        for run in cell.paragraphs[0].runs:
+            run.font.name = FONT
+            run.font.size = Pt(CAP_PT)
+
+doc.add_paragraph().paragraph_format.space_after = Pt(4)
+
+para_label('단락 2 | NSI')
+what_to_write('NSI 실수치 표 제시. bandwidth 넓어질수록 단조 감소 → 분리가 동 단위 근린 스케일에 집중. 정책 함의.')
+body(
+    '근린 정렬 지수(NSI) 분석 결과, 비공간 NSI(행정동 경계 기준, 0.0503)에 비해 반경 '
+    '500m에서 0.0297(59%), 1,500m에서 0.0090(18%), 3,000m에서 0.0035(7%)로 bandwidth가 '
+    '넓어질수록 단조 감소하였다. 이는 소득 기반 독거노인 분리가 서울 광역 구조의 문제가 '
+    '아닌 행정동·근린 수준(~1,500m)의 국지적 패턴임을 의미하며, 자치구 단위 광역 '
+    '정책보다 행정동 단위의 미시적 복지 개입이 더 효율적임을 시사한다.'
+)
+
+# Table 3 — NSI
+nsi_cap = doc.add_paragraph()
+nsi_cap.alignment = WD_ALIGN_PARAGRAPH.CENTER
+nsi_cap.paragraph_format.first_line_indent = Inches(0)
+nsi_cap.paragraph_format.space_before = Pt(6)
+nsi_cap.paragraph_format.space_after = Pt(3)
+set_run(nsi_cap.add_run('Table 3. Bandwidth별 NSI 값.'), size=CAP_PT)
+
+nsi_tbl = doc.add_table(rows=7, cols=3)
+nsi_tbl.style = 'Table Grid'
+for i, h_text in enumerate(['Bandwidth', 'NSI', '비공간 대비']):
+    nsi_tbl.rows[0].cells[i].text = h_text
+    for run in nsi_tbl.rows[0].cells[i].paragraphs[0].runs:
+        run.bold = True
+        run.font.name = FONT
+        run.font.size = Pt(CAP_PT)
+nsi_data = [
+    ('비공간 (행정동 경계)', '0.0503', '100%'), ('500 m', '0.0297', '59%'),
+    ('1,000 m', '0.0138', '27%'), ('1,500 m', '0.0090', '18%'),
+    ('2,000 m', '0.0064', '13%'), ('3,000 m', '0.0035', '7%'),
+]
+for ri, row_data in enumerate(nsi_data):
+    for ci, val in enumerate(row_data):
+        cell = nsi_tbl.rows[ri + 1].cells[ci]
+        cell.text = val
+        for run in cell.paragraphs[0].runs:
+            run.font.name = FONT
+            run.font.size = Pt(CAP_PT)
+
+doc.add_paragraph().paragraph_format.space_after = Pt(4)
+eq_text(4, 'NSI = [Σᵢ L̃ᵗᵢ(X̂ᵢ − X̄)² / Σᵢ L̃ᵗᵢ] / S²_total')
+fig_placeholder(2, 'Bandwidth별 전역 D값 변화 그래프 및 NSI 곡선')
+
+# ─────────────────────────────────────────────────────
+# 4. RESULTS AND DISCUSSION
+# ─────────────────────────────────────────────────────
+h1('4. 결과 및 논의')
+guide_box('역할: 결과 제시 + 해석 + 선행연구 비교가 하나의 흐름으로 통합된 섹션.  |  구조: 각 소절마다 전역 결과 → 국지 결과 → 해석 → 선행연구 비교 순서.')
+h2('4.1 저소득 독거노인의 공간적 고립 (연구 질문 1: 노출 축)')
+
+para_label('단락 1 | 전역 결과')
+what_to_write('I = 0.0174 수치 제시 + 기대값 비교로 해석. 절대값이 낮아 보이지만 집단 규모 대비로는 의미 있음을 설명.')
+body(
+    '전역 고립지수는 I = 0.0174로 나타났다. 이는 절대적으로 낮은 수준이나, 저소득 '
+    '독거노인의 도시 전체 비율(π ≈ 1.52%)로 계산되는 무작위 기대값 대비 약 14% 높은 '
+    '값으로, 집단 규모를 고려할 때 해석상 의미 있는 고립 수준이다(Feitosa 2007).'
+)
+
+para_label('단락 2 | 국지 결과')
+what_to_write('Local I 지도에서 어느 지역이 높게 나타났는지.')
+body(
+    '국지 고립지수 지도에서는 강서구, 노원구, 강남구 수서동에 국지 고립이 응축되어 '
+    '나타났다.'
+)
+fig_placeholder(3, 'Local I 단계구분도 (서울시 424개 행정동)')
+
+# Table 4 — Local I Top 10
+t4_cap = doc.add_paragraph()
+t4_cap.alignment = WD_ALIGN_PARAGRAPH.CENTER
+t4_cap.paragraph_format.first_line_indent = Inches(0)
+t4_cap.paragraph_format.space_before = Pt(6)
+t4_cap.paragraph_format.space_after = Pt(3)
+set_run(t4_cap.add_run('Table 4. 국지 고립지수(Local I) 상위 10개 행정동.'), size=CAP_PT)
+
+t4 = doc.add_table(rows=11, cols=4)
+t4.style = 'Table Grid'
+for i, h_text in enumerate(['순위', '구', '동', 'Local I']):
+    t4.rows[0].cells[i].text = h_text
+    for run in t4.rows[0].cells[i].paragraphs[0].runs:
+        run.bold = True
+        run.font.name = FONT
+        run.font.size = Pt(CAP_PT)
+t4_data = [
+    ('1', '강서구', '등촌3동', '0.000417'), ('2', '강서구', '가양2동', '0.000338'),
+    ('3', '노원구', '중계2·3동', '0.000248'), ('4', '강남구', '수서동', '0.000202'),
+    ('5', '노원구', '월계2동', '0.000194'), ('6', '노원구', '하계1동', '0.000187'),
+    ('7', '강서구', '방화3동', '0.000185'), ('8', '중랑구', '망우본동', '0.000178'),
+    ('9', '노원구', '상계3·4동', '0.000174'), ('10', '강서구', '가양3동', '0.000164'),
+]
+for ri, row_data in enumerate(t4_data):
+    for ci, val in enumerate(row_data):
+        cell = t4.rows[ri + 1].cells[ci]
+        cell.text = val
+        for run in cell.paragraphs[0].runs:
+            run.font.name = FONT
+            run.font.size = Pt(CAP_PT)
+
+doc.add_paragraph().paragraph_format.space_after = Pt(4)
+
+para_label('단락 3 | 강남 해석 (고립↓ 상이↑ 불일치)')
+what_to_write('강남은 고립지수가 낮은데 상이지수는 높은 이유. 두 지수가 독립적으로 움직인다는 것을 보여주는 중요한 해석.')
+core_logic(
+    '강남·서초의 Local I 낮음 ≠ 분리 없음. 저소득 독거노인 절대 수 자체가 극히 적어 '
+    '접촉 확률이 수학적으로 낮을 뿐이며, 동시에 Local D는 음수(배제 극)로 높다. '
+    '두 지수는 독립적 차원이므로 함께 봐야 함.'
+)
+expanded_example(
+    '강남·서초구에서는 Local I가 낮게 나타나는데, 이는 해당 지역의 저소득 독거노인 '
+    '절대 수가 서울 평균 대비 극단적으로 적어 집단 내 접촉 확률 자체가 수학적으로 '
+    '낮을 수밖에 없기 때문이다. 고립지수는 정의상 집단의 절대적 규모에 민감하게 '
+    '반응하므로, 저소득 독거노인이 거의 없는 지역에서는 낮은 값이 필연적이다. '
+    '그러나 그 소수의 저소득 독거노인이 전체 인구 구성에서 차지하는 비율은 서울 '
+    '평균에서 크게 이탈해 있어, Local D는 음수(배제 극)로 나타난다. 이는 고립지수와 '
+    '상이지수가 독립적으로 움직이는 분리의 두 차원임을 실증적으로 보여주며, 두 지수를 '
+    '동시에 적용해야만 분리의 전체 구조를 정확히 파악할 수 있음을 시사한다.'
+)
+example_note()
+
+para_label('단락 4 | 선행연구 비교')
+what_to_write('이 결과가 기존 이론과 어떻게 연결되는지.')
+body(
+    '이 결과는 소득 제약이 거주지 선택을 제한하여 특정 지역으로의 집중을 낳는다는 '
+    'Reardon & Bischoff(2011)의 메커니즘과 일치하며, 강서·노원 지역의 저렴 주택 '
+    '집중이 고립 응축의 공간적 기반임을 시사한다. 특히 국지 고립지수 상위권에 포함된 '
+    '노원구 중계2·3동(3위)·월계2동(5위)은 이희연·이다예·유재성(2015)이 저소득층 노인 '
+    '밀집지구로 확인한 영구임대아파트 지구와 일치하며, 본 연구의 측도 결과가 기존 '
+    '밀집지구 연구와 같은 공간적 방향성을 보임을 실증한다. 나아가 Menec(2019) [SW]가 '
+    '제시한 "저소득 노인 비율이 높은 지역에 고립 노인이 집중된다"는 패턴과도 일치하며, '
+    '공간적 고립이 저소득 집중 지역에 중첩됨을 재확인한다.'
+)
+
+h2('4.2 일반인구 대비 거주지 분리 (연구 질문 2 — 첫 번째 측면)')
+
+para_label('단락 1 | 전역 결과')
+what_to_write('D = 0.1318 수치 + 해석. 비교 집단 구성 차이 한계 단서 명시.')
+body(
+    '일반인구 대비 전역 상이지수는 D = 0.1318로 나타났다. 관례적 기준(D < 0.30: '
+    '낮은 분리, 0.30~0.60: 중간, > 0.60: 높은 분리)으로는 낮은 분리 수준에 해당한다. '
+    '이 값은 독거노인 내부 소득 분리(D = 0.0859, 4.3절)보다 높게 나타나는데, 두 분석의 '
+    '비교 집단 구성이 상이하므로(전체 주민 vs 동질적인 독거노인 집단) 수치를 직접 비교하는 '
+    '데에는 한계가 있다. 다만 이 결과는 저소득 독거노인의 공간적 위치가 소득 효과 외에도 '
+    '고령·1인 가구라는 인구학적 특성과 결합되어 있음을 시사한다.'
+)
+
+para_label('단락 2 | 국지 결과 및 부호 해석')
+what_to_write('양극 분화 패턴 + Local D 양수/음수의 의미 해석.')
+core_logic(
+    '노원·강서(양수=집중 극) vs 강남·서초(음수=배제 극) 양극 분화. '
+    '양수는 과대 집중, 음수는 구조적 배제.'
+)
+expanded_example(
+    'Local D 지도에서는 노원·강서구(양수, 집중 극)와 강남·서초구(음수, 배제 극)의 '
+    '뚜렷한 양극 분화가 관찰되었다. 양수 지역은 저소득 독거노인이 지역 인구 구성 '
+    '비율 기준으로 서울 평균보다 과대 집중된 공간이며, 음수 지역은 저소득 독거노인이 '
+    '해당 지역 인구 비율 대비 현저히 낮아 상대적으로 배제된 공간을 의미한다. 이 '
+    '양극 분화는 서울의 주거비 지리를 반영하는데, 저렴한 임대주택이 밀집한 노원·강서 '
+    '지역은 소득 제약이 강한 집단의 집중처가 되는 반면, 고가 주거지인 강남·서초에서는 '
+    '이 집단이 구조적으로 배제된다.'
+)
+example_note()
+fig_placeholder(4, 'Local D 단계구분도 — H2-1 (양수: 집중 극, 음수: 배제 극)')
+
+para_label('단락 3 | 선행연구 비교')
+what_to_write('이 양극 패턴이 거주지 정렬 이론의 두 경로와 대응됨을 연결.')
+core_logic(
+    'Reardon & Bischoff(2011)의 두 경로(부유층 배타 입지 + 저소득층 선택지 제약)와 정확히 대응. '
+    '개인 선택이 아닌 구조적 배제임을 강조.'
+)
+expanded_example(
+    '이 양극 패턴은 Reardon & Bischoff(2011)가 제시한 소득 기반 거주지 분리의 두 경로, '
+    '즉 부유층의 배타적 입지 선택(강남·서초의 배제 패턴)과 저소득층의 선택지 제약(노원·'
+    '강서의 집중 패턴)과 정확히 대응된다. 이는 저소득 독거노인의 거주지 분리가 개인의 '
+    '선택이 아닌 주거비 장벽에 의한 구조적 배제의 결과임을 시사하며, 단순한 공간 집중을 '
+    '넘어 사회경제적 불평등이 공간적으로 가시화된 것으로 해석된다.'
+)
+example_note()
+
+h2('4.3 독거노인 내부 소득 기반 분리 (연구 질문 2 — 두 번째 측면)')
+
+para_label('단락 1 | 전역 결과 해석')
+what_to_write('D = 0.0859. 낮아 보이지만 그게 의미하는 바 설명 (독거 형태 안에서 소득의 추가적 분리 효과가 제한적임).')
+body(
+    '독거노인 내부 소득 기반 전역 상이지수는 D = 0.0859로, H2-1(0.1318)보다 낮게 '
+    '나타났다. 관례적 기준(D < 0.30: 낮은 분리)으로는 낮은 분리 수준에 해당하며, '
+    '이는 서울 전역 평균으로는 독거노인 집단 안에서 소득에 따른 추가적 분리 효과가 '
+    '상대적으로 제한적임을 시사한다.'
+)
+
+para_label('단락 2 | 국지 결과 및 Schelling 해석')
+what_to_write('전역 평균은 낮아도 국지적으로는 큰 분화가 나타남. Schelling 논리로 해석.')
+core_logic(
+    '전역 D = 0.0859는 낮아 보이지만 국지 수준에서는 강남·서초(배제) vs 노원·강서(집중) '
+    '양극 분화가 존재. Schelling의 누적 선호 논리로 설명 가능.'
+)
+expanded_example(
+    '그러나 국지 수준에서는 강남·서초(배제 극) vs 노원·강서(집중 극)의 양극 분화가 '
+    'H2-1과 유사한 패턴으로 관찰되었다. Schelling(1971)의 누적 선호 이론에 따르면, '
+    '집단 구성원 각각의 작은 선호(비슷한 소득 집단과의 거주 선호)가 반복·누적될 경우 '
+    '전역 평균이 낮더라도 국지적으로 큰 분화가 발생할 수 있다. 전역 D = 0.0859라는 '
+    '수치는 서울 전체 평균에서 독거 형태 안에서의 소득 분리가 상대적으로 제한적임을 '
+    '보여주지만, 국지 수준의 양극 분화는 이 분리가 특정 지역에 집중되어 있음을 나타낸다.'
+)
+example_note()
+fig_placeholder(5, 'Local D 단계구분도 — H2-2 (독거노인 내부 소득 분리)')
+
+para_label('단락 3 | 선행연구 비교')
+what_to_write('같은 가구 형태 안에서도 소득이 거주지 분화의 독립 변수로 남음을 선행연구와 연결.')
+core_logic(
+    '독거라는 가구 유형을 통제해도 소득이 거주지 분화의 독립 변수로 남음. '
+    '소득 기반 정렬이 가구 형태를 초월해 작동함을 실증.'
+)
+expanded_example(
+    '소득이 같은 가구 유형(독거노인) 안에서도 거주지를 분화시키는 독립 요인으로 '
+    '작용한다는 점은 중요한 함의를 갖는다. 이는 독거라는 가구 형태를 통제한 후에도 '
+    '소득이 거주지 정렬을 설명하는 독립 변수로 남음을 의미하며, Owens(2016) [SW]가 '
+    '가구 유형 통제 후에도 소득이 분리의 독립 요인으로 남음을 실증한 결과와 일치한다. '
+    '소득 기반 거주지 정렬이 가구 유형의 효과를 초월하여 작동하는 보편적 메커니즘임을 '
+    '본 연구 결과와 Cartone(2025) [SW] 등 선행연구 모두 지지한다.'
+)
+example_note()
+
+h2('4.4 민감도 분석')
+
+para_label('단락 1 | Bandwidth 비교 결과')
+what_to_write('다양한 bandwidth에서도 결과가 안정적 → 분석의 robust성 확인.')
+body(
+    'Bandwidth를 500m에서 3,000m까지 변화시켜도 전역 상이지수는 안정적으로 유지되었으며, '
+    '이는 분석 결과가 bandwidth 선택에 강건(robust)함을 나타낸다.'
+)
+
+para_label('단락 2 | NSI 해석 및 정책 함의')
+what_to_write('분리가 ~1,500m 스케일에 집중 → 자치구보다 행정동 단위 정책이 효과적.')
+body(
+    'NSI 분석 결과, 분리는 약 1,500m 근린 스케일에 집중되어 있었다. 이는 자치구 단위의 '
+    '광역 정책보다 행정동 단위의 미시적 복지 개입이 더 효율적임을 시사한다.'
+)
+fig_placeholder(6, 'Bandwidth별 전역 D값 변화 그래프 및 NSI 곡선')
+
+# ─────────────────────────────────────────────────────
+# 5. CONCLUSION
+# ─────────────────────────────────────────────────────
+h1('5. 결론')
+guide_box('역할: 논문 전체를 마무리하고 의미를 정리하는 구간.  |  구조: 연구 요약 → 이론적 기여 → 한계 → 향후 연구')
+
+para_label('단락 1 | 연구 요약')
+what_to_write('연구 목적, 방법, 핵심 결과, 이론적 해석을 한 문단으로 압축. 초록보다 조금 더 상세하게.')
+body(
+    '본 연구는 서울시 424개 행정동을 대상으로 저소득 독거노인의 거주지 분리를 '
+    '노출 축(공간 고립지수)과 균등성 축(공간 상이지수)으로 측정하였다. 전역 고립지수 '
+    'I = 0.0174는 무작위 기대값(π = 0.0152) 대비 약 14% 높아 약한 수준의 고립이 '
+    '확인되었으며, 국지적으로는 강서·노원 지역에 고립이 응축되었다. 일반인구 대비 '
+    '전역 상이지수(D = 0.1318)는 독거노인 내부 소득 분리(D = 0.0859)보다 높게 '
+    '나타나, 소득·고령·1인 가구 특성이 결합된 분리가 더 강하게 작동함을 확인하였다. '
+    '이 패턴은 거주지 정렬 이론이 예측하는 부유층 배타 입지(강남·서초 배제)와 '
+    '저소득층 선택지 제약(노원·강서 집중)의 두 경로와 정확히 대응된다.'
+)
+
+para_label('단락 2 | 이론적 기여 및 정책 함의')
+what_to_write('이 연구가 선행연구·이론에 무엇을 더했는지 + 정책 우선 대상 행정동 명시.')
+body(
+    '이론적 기여 측면에서, 본 연구는 거주지 분리 측도를 인종·민족 맥락에서 소득·가구 '
+    '형태 맥락으로 확장 적용하였다는 점에서 의의를 갖는다. '
+    "Reardon & O'Sullivan(2004)의 두 축 프레임(노출·균등성)이 서울시 저소득 독거노인 "
+    '집단에서도 유효하게 작동함을 실증하였으며, 특히 강남·서초에서 관찰된 '
+    'Local I 낮음과 Local D 음수의 공존은 두 지수가 독립적으로 움직이는 분리의 두 차원임을 '
+    '보여주어, 단일 지수로는 포착할 수 없는 분리 구조를 드러낸다. 정책적으로는 '
+    'Local I 상위 행정동(강서구 등촌3·가양2동, 노원구 중계2·3동 등)을 복지 자원 배치의 '
+    '우선 대상으로 수치로 뒷받침함으로써, 행정동 단위 미시적 개입의 근거를 제공한다.'
+)
+
+para_label('단락 3 | 연구 한계')
+what_to_write('이 연구가 갖는 한계를 솔직하게 기술. 4가지.')
+body(
+    '본 연구는 네 가지 한계를 갖는다. 첫째, 2024년 단일 시점 데이터로 분리의 '
+    '시계열적 변화를 파악하기 어렵다. 둘째, 기초생활수급자를 저소득 독거노인의 '
+    '대리 변수로 사용하였으나, 차상위계층 등 수급 기준 외 실질적 빈곤층이 누락될 '
+    '수 있으며, 주민등록 기준 데이터 특성상 실제 거주지와 등록지가 불일치하는 경우도 '
+    '포함될 수 있다. 셋째, 행정동 단위 집계 데이터의 특성상 동 내부 이질성 포착이 '
+    '불가능하며, 개인 수준의 결론 도출 시 생태학적 오류(ecological fallacy) 위험이 '
+    '존재한다. 넷째, 노인여가복지시설의 공급 분포와의 교차 분석은 분리(수요 측) '
+    '연구의 범위를 벗어나는 공급 측 문제로 본 연구에서 제외하였다.'
+)
+
+para_label('단락 4 | 향후 연구')
+what_to_write('이 연구의 한계를 극복하거나 연장할 수 있는 방향 제시.')
+body(
+    '향후 연구는 다음 방향으로 확장될 수 있다. 다년도 데이터를 활용한 분리 추이 분석으로 '
+    '정렬의 동태적 과정을 추적하거나, 차상위계층을 포함한 확장된 저소득 정의를 적용할 '
+    '수 있다. 또한 본 연구에서 식별된 고위험 행정동을 대상으로 복지시설 접근성 분석을 '
+    '연계하여 수요-공급 불일치 구조를 분석하는 것도 유망한 연구 방향이다.'
+)
+
+out = '/Users/jin/홍교수님 수업/RSG_final/논문_초안_v2.docx'
+doc.save(out)
+print(f'완료: {out}')
